@@ -3,15 +3,19 @@ using namespace std;
 
 void hold(){for(int i = 0; i < INT_MAX/8; ++i);}
 
-map<string, string> faculty_id_password;
-map<string, string> student_id_password;
+map<string, string> faculty_id_password = {{"faculty", "faculty"}};
+map<string, string> student_id_password = {{"student", "student"}};
 
-class University{
+class Admin{
     private:
         map<string, string> faculty_id_password;
         map<string, string> student_id_password;
     public:
-        bool admin();
+        void admin();
+        void add_id();
+        void del_id();
+        void god_mode();
+
 };
 class Faculty{
 
@@ -20,9 +24,10 @@ class Faculty{
         string position;
         string subject;
 
-    void get_salary();
-    void teach();
-    void spend();
+    void faculty();
+    void put_notice();
+    void prepare_exam();
+    void check_exam();
 
     private:
         long long int mobno;
@@ -39,17 +44,18 @@ class Student {
         int year;
         string branch;
         bool hosteller;
+        char gender;
 
-    void student_login();
+    void student();
+    bool get_fee(float);
     void submit_fees();
-    void study();
-    void take_exam();
+    void give_exam();
     void check_result();
 
     private:
         long long int mobno;
         float marks;
-        float fees;
+        float fee;
         string address;
 
 };
@@ -163,20 +169,24 @@ void del_id(){                                                                  
     cout << "\n\n\t\t\tID deleted\n\n\n";
 
 }
-void god_mode(){                                                                //  edits : 04/03/2023
+void god_mode(){                                                                //  edits : 06/03/2023, 04/03/2023
+    system("clear");
     /*Give read access to this code file*/
     fstream code;
-    code.open("/home/satyam/Coding/Projects/UniversityMgmt/UniversityManagementSystem.cpp", ios :: in);
-    char data[1000];
-    while(!code.eof()){
-        code >> data;
-        cout << data << " ";
-    }
-    // cin.getline(data, 1000);
-    // cout << data << endl;
+    code.open("/home/satyam/Coding/UniversityMgmt/UniversityManagementSystem.cpp", ios :: in);
+    string line;
+    while(getline(code, line))
+        cout << line << endl;
     code.close();
+    
+    // fstream code;
+    // code.open("/home/satyam/Coding/UniversityMgmt/UniversityManagementSystem.cpp", ios :: in);
+    // char data[1000];
+    // while(!code.eof()){
+    // code.close();
+
 }
-void admin() {                                                                  //  edits : 02/03/2023
+void admin(){                                                                   //  edits : 02/03/2023
     //  add_id()    add new student, add new faculty
     //  del_id()    delete student, delete faculty
     //  god_mode()  add new functionality - do wahtever he wants - even has access to the matrix' code - omnipotent    
@@ -194,11 +204,71 @@ void admin() {                                                                  
     }
 }
 
-void put_notice(){                                                              //  edits : 05/03/2023
+// class Faculty
+void put_notice(){                                                              //  edits : 13/03/2023, 05/03/2023
+    cout << "\n\n\t\t\tEnter a notice to be displayed : \n\n\t\t\t";
+    string notice;
+    cin.ignore();                                   // to ignore an extra enter key from previous keypress
+    getline(cin, notice);
+    // noticeBoard.push(notice);                                                // NoticeBoard class handles all notices 
+    // cout << "\n\n\t\t\t" << noticeBoard.top();
+    cout << "\n\n\t\t\t" << "Notice Published to Notice Board";
+    cout << "\n\n\n\n";
 }
-void prepare_exam(){}
+void prepare_exam(){                                                            //  edits : 06/03/2023
+    system("clear");
+    int n;    cout << "\n\n\t\t\t" << "How Many Questions to create?\t";      cin >> n; 
+    int q;    cout << "\t\t\tNumber of Options in every Question?\t";       cin >> q;
+    fstream data;
+    data.open("questions.txt", ios :: in);
+    if(data){
+        //  what to do if file is not empty?
+        //  maybe upload it to PYQ's
+        //  delete file
+        data.open("questions.txt", ios::out);
+        data << "";
+    }
+    data.open("questions.txt", ios::app | ios::out);
+    //  previous data is deleted
+    for(int i = 1; i <= n; ++i){
+        cout << "\n\n\n\t\t\tQuestion " << i << " : ";
+        cin.ignore();
+        string question;      getline(cin, question);
+        cout << endl;
+        data << "Question " << i << " : " << question << "\n";     // first letter not showing maybe input bug, maybe output
+        for(int j = 1; j <= q; ++j){
+            cout << "\t\t\tOption " << j << " : ";
+            string option;        getline(cin, option);
+            data << "Option " << j << " : " << option << "\n";     // first letter not showing maybe input bug, maybe output
+        }
+        data.close();
+        cout << "\n\t\t\tQuestion " << i << " entered.\n";
+        if(i != n)
+            cout << "\t\t\tEnter next Question.";
+        else{
+            cout << "\n\n\t\t\tQuestion paper created.";                        // not printing properly
+            cin.ignore();                                                       // bug occuring
+            hold();hold();
+            system("clear");                                                    // clear executing first, the previous line, later
+            cout << "\n\n\n\t\t\t\t___Press 1 to View___";
+            cout << "\n\n\t\t\t\t___Press 0 to Exit___";
+            cout << "\n\n\t\t\t\t\t";
+            bool view;  cin >> view;
+            if(view){
+                system("clear");
+                //  View question paper
+                fstream paper;
+                paper.open("questions.txt", ios::in);
+                string line;
+                while(getline(paper, line))                     // first letter not showing maybe input bug, maybe output
+                    cout << line << endl;
+                paper.close();
+            }
+        }
+    }
+}
 void check_exam(){}
-void faculty(){                                                                 //  edits : 03/03/2023
+void faculty(){                                                                 //  edits : 05/03/2023
     //  put_notice()
     //  prepare_exam()
     //  check_exam()
@@ -217,8 +287,79 @@ void faculty(){                                                                 
     }
 }
 
+// class Student
+bool get_fee(float fee){                                                        //  edits : 05/03/2023
+    //  Fee contains the amount of fees to be submitted
+    //  Return the confirmation of whether fees is submitted or not
 
-void student(){}
+    cout << "\n\n\n\t\t\t\tImplementation Pending\n\n\n";
+    return 0;
+}
+void submit_fees(){                                                             //  edits : 05/03/2023
+    // Display fees
+    string name = "Get this name";          //  get name of student
+    string branch = "Get Department";           //  get department of study
+    int year = 1;                           //  get year of study
+    char gender = 'M';                      //  get gender
+    float fee = 3;                          //  get fees - if 0, print fees is submitted
+    system("clear");
+    cout << "\n\n\n\t\t\t\tName : " << name;
+    cout << "\t\t\t\tGender: " << gender;
+    cout << "\n\n\t\t\t\tInfo : \t" << branch << " " << year << " year";
+    if(fee == 0){
+        cout << "\n\n\n\t\t\t\tYour fee is already submitted";
+        cout << "\n\n\n\t\t\t\tAap hamari University ki shaan ho...!!!";
+        cout << "\n\n\t\t\t\tThank You for Visiting.\n\n\n\n";
+        exit(0);
+    }
+    cout << "\n\n\n\t\t\t\tFee to be submitted : " << fee;
+    cout << "\n\n\n\n\n\t\t\t\tPress 1 to submit now.";
+    cout << "\n\n\n\t\t\t\tPress 0 to exit.\n\n\n\n";
+    char option;    cout << "\t\t\t\t";     cin >> option;
+    if(option != '1' && option != '0'){
+        cout << "\n\n\n\t\t\t\tYou are Naughty";
+        cout << "\n\n\t\t\t\tEXITING...\n\n\n\n";
+        exit(0);
+    }
+    if(option == '0'){
+        char notation = 'e';
+        if(gender == 'M')
+            notation = 'a';
+        else if(gender == 'F')
+            notation = 'i';
+        cout << "\n\n\n\t\t\t\tAre yarr... Fees to bhart" << notation << " jat" << notation << "\n\n\n\n";
+        exit(0);
+    }
+    bool submitted = get_fee(fee);                  // submited contains confirmation
+    if(submitted){
+        cout << "\n\n\n\t\t\t\tCongratualations!!!";
+        cout << "\n\n\t\t\t\tYour fees has been submitted";
+    }
+    else{
+        cout << "\n\n\n\t\t\t\tSorry!!!";
+        cout << "\n\n\t\t\t\tFees submittion failed";
+    }
+    cout << "\n\n\n\n";
+}
+void give_exam(){}
+void check_result(){}
+void student(){                                                                 //  edits : 13/03/2023
+    // submit_fees()
+    // give_exam()
+    // check_result()
+    int work = display("Student menu", {"Submit Fees", "Give Exam", "Check Result"});
+    int option;
+    switch(work){
+        case '0' : exit(0);
+        break;
+        case '1' : submit_fees();
+        break;
+        case '2' : give_exam();
+        break;
+        case '3' : check_result();
+        break;
+    }
+}
 
 void menu(){                                                                    // edits : 01/03/2023, 27/02/2023, 26/02/2023
     bool logged = 0; 
@@ -307,5 +448,5 @@ int main(){
     // cin.tie(nullptr);
     // University* univ1 = new University();
     menu();
-
+    // prepare_exam();
 }
